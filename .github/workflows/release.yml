@@ -1,74 +1,104 @@
-name: Build and Release
+name: Release
 
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
+
+  workflow_dispatch:
 
 jobs:
-  build:
+  release:
+    name: Cross build for ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
-        os: [ubuntu-latest, macOS-latest, windows-latest]
         include:
           - os: ubuntu-latest
-            platform: x86_64-linux
-            filename: Master
-          - os: macOS-latest
-            platform: x86_64-apple-darwin
-            filename: Master
+            target: x86_64-linux
+            suffix: ""
+
+          - os: ubuntu-latest
+            target: aarch64-linux
+            suffix: ""
+            
+          - os: ubuntu-latest
+            target: aarch64-linux-android
+            suffix: ""
+
+          # 32bit
+          - os: ubuntu-latest
+            target: armv7-linux-androideabi
+            suffix: ""
+
+          - os: ubuntu-latest
+            target: armv7-linuxeabihf
+            suffix: ""
+
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            suffix: ""
+
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            suffix: ""
+
           - os: windows-latest
-            platform: x86_64-windows
-            filename: Master.exe
-          - os: ubuntu-latest
-            platform: aarch64-linux
-            filename: Master
-          - os: macOS-latest
-            platform: aarch64-apple-darwin
-            filename: Master
-          - os: windows-latest
-            platform: aarch64-windows
-            filename: Master.exe
-          - os: ubuntu-latest
-            platform: armv7-linux
-            filename: Master
-          - os: ubuntu-latest
-            platform: aarch64-linux-android
-            filename: Master
+            target: x86_64-pc-windows-msvc
+            suffix: .exe
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.x
+          python-version: '3.x'
 
       - name: Install dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install requests pyinstaller
 
-      - name: Build executable
+      - name: Build release
         run: |
-          pyinstaller --onefile Master.py
-          mv dist/Master ${{ matrix.filename }}
+          pyinstaller --clean --onefile --name Master${{matrix.suffix}} --distpath target/${{ matrix.target }}/release/ Master.py
 
-      - name: Create release
-        id: create_release
-        uses: actions/create-release@v1
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Master-${{ matrix.target }}
+          path: |
+            target/${{ matrix.target }}/release/Master${{matrix.suffix}}
+
+
+      - name: Zip Release For Master (Linux)
+        if: matrix.os == 'ubuntu-latest' && contains(matrix.target, 'linux')
+        uses: TheDoctor0/zip-release@0.7.1
+        with:
+          type: zip
+          filename: Master-${{ matrix.target }}.zip
+          directory: target/${{ matrix.target }}/release/
+          path: |
+            Master${{matrix.suffix}}
+
+      - name: Zip Release For Master (MacOS/Window)
+        if: true && !contains(matrix.target, 'linux')
+        uses: TheDoctor0/zip-release@0.7.1
+        with:
+          type: zip
+          filename: Master-${{ matrix.target }}.zip
+          directory: target/${{ matrix.target }}/release/
+          path: |
+            Master${{matrix.suffix}}
+
+      - name: Publish
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ matrix.filename }}
-          path: ${{ matrix.filename }}
+          files: |
+            target/${{ matrix.target }}/release/Master-${{ matrix.target }}.zip
+          generate_release_notes: true
+          draft: true
