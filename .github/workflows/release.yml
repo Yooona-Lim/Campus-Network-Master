@@ -1,4 +1,4 @@
-name: Build Executables
+name: Build and Release
 
 on:
   push:
@@ -7,10 +7,39 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            platform: x86_64-linux
+            filename: Master
+          - os: macOS-latest
+            platform: x86_64-apple-darwin
+            filename: Master
+          - os: windows-latest
+            platform: x86_64-windows
+            filename: Master.exe
+          - os: ubuntu-latest
+            platform: aarch64-linux
+            filename: Master
+          - os: macOS-latest
+            platform: aarch64-apple-darwin
+            filename: Master
+          - os: windows-latest
+            platform: aarch64-windows
+            filename: Master.exe
+          - os: ubuntu-latest
+            platform: armv7-linux
+            filename: Master
+          - os: ubuntu-latest
+            platform: aarch64-linux-android
+            filename: Master
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Set up Python
@@ -20,104 +49,26 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pyinstaller requests
+          pip install requests pyinstaller
 
-      - name: Build executables
+      - name: Build executable
         run: |
-          # Build for x86_64
-          pyinstaller --onefile -o dist/windows-x86_64 Master.py
-          pyinstaller --onefile -o dist/linux-x86_64 Master.py
-          pyinstaller --onefile -o dist/macos-x86_64 Master.py
-
-          # Build for aarch64
-          pyinstaller --onefile -o dist/windows-aarch64 Master.py
-          pyinstaller --onefile -o dist/linux-aarch64 Master.py
-          pyinstaller --onefile -o dist/macos-aarch64 Master.py
-
-          # Build for armv7
-          pyinstaller --onefile -o dist/windows-armv7 Master.py
-          pyinstaller --onefile -o dist/linux-armv7 Master.py
-          pyinstaller --onefile -o dist/macos-armv7 Master.py
+          pyinstaller --onefile Master.py
+          mv dist/Master ${{ matrix.filename }}
 
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: |
-            Automatic release for tag ${{ github.ref }}
           draft: false
           prerelease: false
 
-      - name: Upload executables
-        uses: actions/upload-release-asset@v1
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/windows-x86_64/Master.exe
-          asset_name: Master-windows-x86_64.exe
-          asset_content_type: application/octet-stream
-
-      - name: Upload executables
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/linux-x86_64/Master
-          asset_name: Master-linux-x86_64
-          asset_content_type: application/octet-stream
-
-      - name: Upload executables
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/macos-x86_64/Master
-          asset_name: Master-macos-x86_64
-          asset_content_type: application/octet-stream
-
-      - name: Upload executables
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/windows-aarch64/Master.exe
-          asset_name: Master-windows-aarch64.exe
-          asset_content_type: application/octet-stream
-
-      - name: Upload executables
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/linux-aarch64/Master
-          asset_name: Master-linux-aarch64
-          asset_content_type: application/octet-stream
-
-      - name: Upload executables
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/macos-aarch64/Master
-          asset_name: Master-macos-aarch64
-          asset_content_type: application/octet-stream
-
-      - name: Upload executables
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/windows-armv7/Master.exe
-          asset_name: Master-windows-armv7.exe
-          asset_content_type: application/octet-stream
-
-      - name: Upload executables
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/linux-armv7/Master
-          asset_name: Master-linux-armv7
-          asset_content_type: application/octet-stream
-
-      - name: Upload executables
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/macos-armv7/Master
-          asset_name: Master-macos-armv7
-          asset_content_type: application/octet-stream
+          name: ${{ matrix.filename }}
+          path: ${{ matrix.filename }}
