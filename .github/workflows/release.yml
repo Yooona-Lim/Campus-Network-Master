@@ -50,25 +50,25 @@ jobs:
           path: |
             target/
 
-      # - name: Zip Release For Master (Linux)
-      #   if: matrix.os == 'ubuntu-latest' && contains(matrix.target, 'linux')
-      #   uses: TheDoctor0/zip-release@0.7.1
-      #   with:
-      #     type: zip
-      #     filename: Master-${{ matrix.target }}.zip
-      #     directory: target/${{ matrix.target }}/release/
-      #     path: |
-      #       Master${{matrix.suffix}}
+      - name: Zip Release For Master (Linux)
+        if: matrix.os == 'ubuntu-latest' && contains(matrix.target, 'linux')
+        uses: TheDoctor0/zip-release@0.7.1
+        with:
+          type: zip
+          filename: Master-${{ matrix.target }}.zip
+          directory: target/${{ matrix.target }}/release/
+          path: |
+            Master${{matrix.suffix}}
 
-      # - name: Zip Release For Master (MacOS/Window)
-      #   if: true && !contains(matrix.target, 'linux')
-      #   uses: TheDoctor0/zip-release@0.7.1
-      #   with:
-      #     type: zip
-      #     filename: Master-${{ matrix.target }}.zip
-      #     directory: target/${{ matrix.target }}/release/
-      #     path: |
-      #       Master${{matrix.suffix}}
+      - name: Zip Release For Master (MacOS/Window)
+        if: true && !contains(matrix.target, 'linux')
+        uses: TheDoctor0/zip-release@0.7.1
+        with:
+          type: zip
+          filename: Master-${{ matrix.target }}.zip
+          directory: target/${{ matrix.target }}/release/
+          path: |
+            Master${{matrix.suffix}}
 
       - name: Publish
         uses: softprops/action-gh-release@v1
