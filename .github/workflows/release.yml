@@ -42,13 +42,13 @@ jobs:
 
       - name: Build release
         run: |
-          pyinstaller --clean --onefile --name Master${{matrix.suffix}} --distpath target/ Master.py
+          pyinstaller --clean --onefile --name Master${{matrix.suffix}} --distpath target/${{ matrix.target }}/release/ Master.py
 
       - uses: actions/upload-artifact@v3
         with:
           name: Master-${{ matrix.target }}
           path: |
-            target/
+            target/${{ matrix.target }}/release/Master${{matrix.suffix}}
 
       - name: Zip Release For Master (Linux)
         if: matrix.os == 'ubuntu-latest' && contains(matrix.target, 'linux')
@@ -56,7 +56,7 @@ jobs:
         with:
           type: zip
           filename: Master-${{ matrix.target }}.zip
-          directory: target/
+          directory: target/${{ matrix.target }}/release/
           path: |
             Master${{matrix.suffix}}
 
@@ -66,7 +66,7 @@ jobs:
         with:
           type: zip
           filename: Master-${{ matrix.target }}.zip
-          directory: target/
+          directory: target/${{ matrix.target }}/release/
           path: |
             Master${{matrix.suffix}}
 
@@ -77,5 +77,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            target/
+            target/${{ matrix.target }}/release/Master-${{ matrix.target }}.zip
           generate_release_notes: true
