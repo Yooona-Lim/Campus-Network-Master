@@ -96,4 +96,3 @@ jobs:
           files: |
             target/${{ matrix.target }}/release/Master-${{ matrix.target }}.zip
           generate_release_notes: true
-          draft: true

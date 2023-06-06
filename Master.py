@@ -78,21 +78,25 @@ class network_master:
         return r.status_code
 
 if __name__ == "__main__":
-    print('Find your user and password in the file.')
-    f = open('user.txt', 'r')
-    user = f.readline().strip()
-    passwd = f.readline().strip()
-    f.close()
-    print('user: ', user)
-    print('passwd: ', passwd)
-    master = network_master(user, passwd)
-    print('1.login 2.logout')
-    choice = int(input('input your choice: '))
-    if choice == 1:
-        r = master.login()
-        print('login request status code: ', r)
-    elif choice == 2:
-        r = master.logout()
-        print('logout request status code: ', r)
-    else:
-        print('error input')
+    try:
+        print('Find your user and password in the file.')
+        with open('user.txt', 'r') as f:
+            user = f.readline().strip()
+            passwd = f.readline().strip()
+        print('user:', user)
+        print('passwd:', passwd)
+        master = network_master(user, passwd)
+        print('1. login\n2. logout')
+        choice = int(input('input your choice: '))
+        if choice == 1:
+            r = master.login()
+            print('login request status code:', r)
+        elif choice == 2:
+            r = master.logout()
+            print('logout request status code:', r)
+        else:
+            print('error input')
+    except FileNotFoundError:
+        print('Please create a "user.txt" file in the same directory.')
+        print('Enter the username on the first line and the password on the second line.')
+input('Press any key to exit.')
