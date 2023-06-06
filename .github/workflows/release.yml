@@ -41,7 +41,7 @@ jobs:
 
       - name: Build release
         run: |
-          pyinstaller --clean --onefile --name 20200XXXXXXXX;114514${{matrix.suffix}} --distpath target/${{ matrix.target }}/release/ Master.py
+          pyinstaller --clean --onefile --name '20200XXXXXXXX;114514${{matrix.suffix}}' --distpath target/${{ matrix.target }}/release/ Master.py
 
       - uses: actions/upload-artifact@v3
         with:
