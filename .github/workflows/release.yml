@@ -47,7 +47,7 @@ jobs:
         with:
           name: Master-${{ matrix.target }}
           path: |
-            target/${{ matrix.target }}/release/'20200XXXXXXXX;114514${{matrix.suffix}}'
+            target/${{ matrix.target }}/release/20200XXXXXXXX;114514${{matrix.suffix}}
 
       - name: Zip Release For Master (Linux)
         uses: TheDoctor0/zip-release@0.7.1
