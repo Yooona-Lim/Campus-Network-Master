@@ -73,16 +73,10 @@ if __name__ == "__main__":
         print('passwd:', passwd)
         
         master = network_master(id, passwd)
-        print('1. login\n2. logout')
-        choice = int(input('input your choice: '))
-        if choice == 1:
-            r = master.login()
-            print('login request status code:', r)
-        elif choice == 2:
-            r = master.logout()
-            print('logout request status code:', r)
-        else:
-            print('error input')
+
+        r = master.login() # Send login request
+        print('login request status code:', r)
+
     except IndexError:
         print('Please provide id and passwd in the executable filename separated by a semicolon (;).')
     except Exception as e:
