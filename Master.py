@@ -9,7 +9,8 @@ class network_master:
         self.__passwd__ = passwd
         self.__dev__ = device
 
-        self.__url_base = "http://10.0.254.125:801/eportal/portal"
+        self.__url_login = "http://10.0.254.125:801/eportal/portal/login"
+
         self.__ua_pc__ = "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.37"
         self.__ua_ph__ = "5.0 (Linux; Android 9.0; HuaWei Mate Pro) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/81.0.4044.117 Mobile Safari/537.36"
 
@@ -48,35 +49,14 @@ class network_master:
             "terminal_type": str(self.__dev__)
         }
 
-        self.__data_logout = {
-            "callback": "dr1003",
-            "user_account": f"{self.__user__}@telecom",
-            "wlan_user_mac": "000000000000",
-            "wlan_user_ip": "",
-            "jsVersion": "4.1.3",
-            "lang": "zh"
-        }
-
     def login(self) -> int:
         """
         This function is used to send login message to the login authorization server.
         :return: Status code of the request
         """
         self.__process__()
-        url_login = f"{self.__url_base}/login"
-        r = requests.get(url=url_login, params=self.__data_login, headers=self.__headers_list__[self.__dev__])
+        r = requests.get(url=self.__url_login, params=self.__data_login, headers=self.__headers_list__[self.__dev__])
         return r.status_code
-
-    def logout(self) -> int:
-        """
-        This function is used to send logout message to the server.
-        :return: Status code of the request
-        """
-        self.__process__()
-        url_logout = f"{self.__url_base}/mac/unbind"
-        r = requests.get(url=url_logout, params=self.__data_logout, headers=self.__headers_list__[self.__dev__])
-        return r.status_code
-
 import sys
 import os
 
