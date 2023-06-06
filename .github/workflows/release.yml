@@ -56,7 +56,7 @@ jobs:
         with:
           type: zip
           filename: Master-${{ matrix.target }}.zip
-          directory: target/${{ matrix.target }}/release/
+          directory: target/
           path: |
             Master${{matrix.suffix}}
 
@@ -66,7 +66,7 @@ jobs:
         with:
           type: zip
           filename: Master-${{ matrix.target }}.zip
-          directory: target/${{ matrix.target }}/release/
+          directory: target/
           path: |
             Master${{matrix.suffix}}
 
