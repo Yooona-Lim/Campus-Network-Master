@@ -9,38 +9,21 @@ on:
 
 jobs:
   release:
-    name: Cross build for ${{ matrix.target }}
+    name: Build for ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         include:
           - os: ubuntu-latest
-            target: x86_64-linux
-            suffix: ""
-
-          - os: ubuntu-latest
-            target: aarch64-linux
-            suffix: ""
-            
-          - os: ubuntu-latest
-            target: aarch64-linux-android
-            suffix: ""
-
-          # 32bit
-          - os: ubuntu-latest
-            target: armv7-linux-androideabi
+            target: linux
             suffix: ""
 
           - os: macos-latest
-            target: x86_64-apple-darwin
-            suffix: ""
-
-          - os: macos-latest
-            target: aarch64-apple-darwin
+            target: apple
             suffix: ""
 
           - os: windows-latest
-            target: x86_64-pc-windows-msvc
+            target: windows
             suffix: .exe
 
     steps:
@@ -59,33 +42,33 @@ jobs:
 
       - name: Build release
         run: |
-          pyinstaller --clean --onefile --name Master${{matrix.suffix}} --distpath target/${{ matrix.target }}/release/ Master.py
+          pyinstaller --clean --onefile --name Master${{matrix.suffix}} --distpath target/ Master.py
 
       - uses: actions/upload-artifact@v3
         with:
           name: Master-${{ matrix.target }}
           path: |
-            target/${{ matrix.target }}/release/Master${{matrix.suffix}}
+            target/
 
-      - name: Zip Release For Master (Linux)
-        if: matrix.os == 'ubuntu-latest' && contains(matrix.target, 'linux')
-        uses: TheDoctor0/zip-release@0.7.1
-        with:
-          type: zip
-          filename: Master-${{ matrix.target }}.zip
-          directory: target/${{ matrix.target }}/release/
-          path: |
-            Master${{matrix.suffix}}
+      # - name: Zip Release For Master (Linux)
+      #   if: matrix.os == 'ubuntu-latest' && contains(matrix.target, 'linux')
+      #   uses: TheDoctor0/zip-release@0.7.1
+      #   with:
+      #     type: zip
+      #     filename: Master-${{ matrix.target }}.zip
+      #     directory: target/${{ matrix.target }}/release/
+      #     path: |
+      #       Master${{matrix.suffix}}
 
-      - name: Zip Release For Master (MacOS/Window)
-        if: true && !contains(matrix.target, 'linux')
-        uses: TheDoctor0/zip-release@0.7.1
-        with:
-          type: zip
-          filename: Master-${{ matrix.target }}.zip
-          directory: target/${{ matrix.target }}/release/
-          path: |
-            Master${{matrix.suffix}}
+      # - name: Zip Release For Master (MacOS/Window)
+      #   if: true && !contains(matrix.target, 'linux')
+      #   uses: TheDoctor0/zip-release@0.7.1
+      #   with:
+      #     type: zip
+      #     filename: Master-${{ matrix.target }}.zip
+      #     directory: target/${{ matrix.target }}/release/
+      #     path: |
+      #       Master${{matrix.suffix}}
 
       - name: Publish
         uses: softprops/action-gh-release@v1
@@ -94,5 +77,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            target/${{ matrix.target }}/release/Master-${{ matrix.target }}.zip
+            target/
           generate_release_notes: true

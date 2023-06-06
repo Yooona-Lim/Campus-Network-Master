@@ -77,15 +77,22 @@ class network_master:
         r = requests.get(url=url_logout, params=self.__data_logout, headers=self.__headers_list__[self.__dev__])
         return r.status_code
 
+import sys
+import os
+
 if __name__ == "__main__":
     try:
-        print('Find your user and password in the file.')
-        with open('user.txt', 'r') as f:
-            user = f.readline().strip()
-            passwd = f.readline().strip()
-        print('user:', user)
+        print('Reading the executable filename...')
+        filename = os.path.basename(sys.argv[0])
+        filename = os.path.splitext(filename)[0]
+        print('Executable filename:', filename)
+        
+        # Extracting id and passwd from the filename
+        id, passwd = filename.split(';')
+        print('id:', id)
         print('passwd:', passwd)
-        master = network_master(user, passwd)
+        
+        master = network_master(id, passwd)
         print('1. login\n2. logout')
         choice = int(input('input your choice: '))
         if choice == 1:
@@ -96,7 +103,8 @@ if __name__ == "__main__":
             print('logout request status code:', r)
         else:
             print('error input')
-    except FileNotFoundError:
-        print('Please create a "user.txt" file in the same directory.')
-        print('Enter the username on the first line and the password on the second line.')
+    except IndexError:
+        print('Please provide id and passwd in the executable filename separated by a semicolon (;).')
+    except Exception as e:
+        print('An error occurred:', str(e))
 input('Press any key to exit.')
