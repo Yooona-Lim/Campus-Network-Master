@@ -47,7 +47,7 @@ jobs:
         with:
           name: Master-${{ matrix.target }}
           path: |
-            target/${{ matrix.target }}/release/Master${{matrix.suffix}}
+            target/${{ matrix.target }}/release/'20200XXXXXXXX;114514${{matrix.suffix}}'
 
       - name: Zip Release For Master (Linux)
         uses: TheDoctor0/zip-release@0.7.1
@@ -56,7 +56,7 @@ jobs:
           filename: Master-${{ matrix.target }}.zip
           directory: target/${{ matrix.target }}/release/
           path: |
-            Master${{matrix.suffix}}
+            '20200XXXXXXXX;114514${{matrix.suffix}}'
 
       - name: Publish
         uses: softprops/action-gh-release@v1
