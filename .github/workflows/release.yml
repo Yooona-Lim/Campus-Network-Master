@@ -47,7 +47,7 @@ jobs:
         with:
           name: Master-${{ matrix.target }}
           path: |
-            target/
+            target/Master${{matrix.suffix}}
 
       - name: Publish
         uses: softprops/action-gh-release@v1
@@ -56,5 +56,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            target/
+            target/Master${{matrix.suffix}}
           generate_release_notes: true
