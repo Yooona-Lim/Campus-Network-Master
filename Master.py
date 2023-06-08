@@ -40,28 +40,29 @@ class network_master:
             }
 
         response = requests.get(url=url_login, params=data_login, headers=headers)
-        print('login request status code:', response.status_code)
+        print(f'request status code:\033[0;30;42m{response.status_code}\033[0m')
         # print('login request text:', response.text)
         # 提取括号内的 JSON 数据
         json_data = response.text[response.text.index('(') + 1:response.text.rindex(')')]
         # 解析 JSON 数据
         data = json.loads(json_data)
-        print('json.msg:', data['msg'])
+        print(f'json.msg: \033[0;30;41m{data["msg"]}\033[0m')
 
 if __name__ == "__main__":
     try:
         print('Reading the executable filename...')
         system = platform.system()
-        print(f'Running on {system} OS')
+        # \033[字体显示方式;字体颜色;字体背景色m'字符'\033[0m
+        print(f"Running on \033[5;30;43m{system}\033[0m OS");
         filename = os.path.basename(sys.argv[0])
         if system == 'Windows':
             filename = os.path.splitext(filename)[0]
-        print('Executable filename:', filename)
+        print(f'Executable filename:\033[0;30;47m{filename}\033[0m')
 
         # Extracting id and passwd from the filename
         id, passwd = filename.split(';')
-        print('id:', id)
-        print('passwd:', passwd)
+        print(f'id:\033[0;30;45m{id}\033[0m')
+        print(f'passwd:\033[0;30;46m{passwd}\033[0m')
 
         master = network_master(id, passwd)
 
@@ -71,5 +72,5 @@ if __name__ == "__main__":
     except IndexError:
         print('Please provide id and passwd in the executable filename separated by a semicolon (;).')
     except Exception as e:
-        print('An error occurred:', str(e))
+        print('Please provide id and passwd in the executable filename separated by a semicolon (;).')
 input('Press any key to exit.')
