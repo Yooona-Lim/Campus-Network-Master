@@ -19,7 +19,7 @@ jobs:
             suffix: ""
 
           - os: macos-latest
-            target: apple
+            target: macos
             suffix: ""
 
           - os: windows-latest
