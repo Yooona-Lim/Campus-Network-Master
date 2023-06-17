@@ -41,13 +41,22 @@ jobs:
 
       - name: Build release
         run: |
-          pyinstaller --clean --onefile --name '${{ matrix.target }}20200XXXXXXXX;114514${{matrix.suffix}}' --distpath target/${{ matrix.target }}/release/ Master.py
+          pyinstaller --clean --onefile --name '20200XXXXXXXX;114514${{matrix.suffix}}' --distpath target/${{ matrix.target }}/release/ Master.py
 
       - uses: actions/upload-artifact@v3
         with:
           name: Master-${{ matrix.target }}
           path: |
-            target/${{ matrix.target }}/release/${{ matrix.target }}20200XXXXXXXX;114514${{matrix.suffix}}
+            target/${{ matrix.target }}/release/20200XXXXXXXX;114514${{matrix.suffix}}
+
+      - name: Zip Release For Master (Linux)
+        uses: TheDoctor0/zip-release@0.7.1
+        with:
+          type: zip
+          filename: Master-${{ matrix.target }}.zip
+          directory: target/${{ matrix.target }}/release/
+          path: |
+            20200XXXXXXXX;114514${{matrix.suffix}}
 
       - name: Publish
         uses: softprops/action-gh-release@v1
@@ -56,5 +65,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            target/${{ matrix.target }}/release/${{ matrix.target }}20200XXXXXXXX;114514${{matrix.suffix}}
+            target/${{ matrix.target }}/release/Master-${{ matrix.target }}.zip
           generate_release_notes: true
