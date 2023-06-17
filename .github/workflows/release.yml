@@ -49,15 +49,6 @@ jobs:
           path: |
             target/${{ matrix.target }}/release/20200XXXXXXXX;114514${{matrix.suffix}}
 
-      - name: Zip Release For Master (Linux)
-        uses: TheDoctor0/zip-release@0.7.1
-        with:
-          type: zip
-          filename: Master-${{ matrix.target }}.zip
-          directory: target/${{ matrix.target }}/release/
-          path: |
-            20200XXXXXXXX;114514${{matrix.suffix}}
-
       - name: Publish
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
@@ -65,5 +56,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            target/${{ matrix.target }}/release/Master-${{ matrix.target }}.zip
+            target/${{ matrix.target }}/release/20200XXXXXXXX;114514${{matrix.suffix}}
           generate_release_notes: true
