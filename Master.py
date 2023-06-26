@@ -58,7 +58,7 @@ class network_master:
 
             except requests.exceptions.RequestException as err:
                 print('An error occurred during the request:', err)
-                time.sleep(2)  # 等待2秒后重试
+                time.sleep(4)  # 等待4秒后重试
 
         else:
             print('Exceeded maximum number of attempts. Request failed.')
