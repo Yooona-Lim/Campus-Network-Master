@@ -100,7 +100,7 @@ current_time = datetime.datetime.now()
 formatted_datetime = current_time.strftime("%Y-%m-%d %H:%M:%S\n")
 
 # 创建文件并写入日期
-file_name = "debug.txt"
+file_name = "debug.log"
 with open(file_name, "a") as file:
     file.write(str(formatted_datetime))
 
