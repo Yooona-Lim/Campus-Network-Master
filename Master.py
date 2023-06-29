@@ -4,7 +4,7 @@ import os
 import requests
 import json
 import time
-import datetime
+
 class network_master:
     def __init__(self, id: str, passwd: str) -> None:
         self.__id__ = id
@@ -94,17 +94,5 @@ if __name__ == "__main__":
         print('Please provide a 13-digit numeric ID in the executable filename separated by a semicolon (;).')
     except Exception as e:
         print('An error occurred:', str(e))
-
-# 获取当前日期
-current_time = datetime.datetime.now()
-formatted_datetime = current_time.strftime("%Y-%m-%d %H:%M:%S\n")
-
-# 创建文件并写入日期
-file_name = "debug.log"
-with open(file_name, "a") as file:
-    file.write(str(formatted_datetime))
-
-print("The current time has been written to the file", file_name)
-
 
 input('Press any key to exit.')
