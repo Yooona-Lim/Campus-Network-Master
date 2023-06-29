@@ -64,6 +64,7 @@ class network_master:
             print('Exceeded maximum number of attempts. Request failed.')
 
 if __name__ == "__main__":
+    time.sleep(2)  # 等待4秒后尝试
     try:
         print('Reading the executable filename...')
         system = platform.system()
