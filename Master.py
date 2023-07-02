@@ -18,35 +18,18 @@ class network_master:
         url_login = "http://10.0.254.125:801/eportal/portal/login"
 
         data_login = {
-            "callback": "dr1011",
-            "login_method": "1",
-            "wlan_user_mac": "000000000000",
-            "ua_name": "Netscape",
-            "ua_code": "Mozilla",
-            "user_account": f",0,{self.__id__}@telecom",
+            "user_account": self.__id__,
             "user_password": self.__passwd__,
-            "terminal_type": str(0)
         }
-
-        headers = {
-                "Accept": "*/*",
-                "Accept-Encoding": "gzip, deflate",
-                "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
-                "Connection": "keep-alive",
-                "DNT": "1",
-                "Host": "10.0.254.125:801",
-                "Referer": "http://10.0.254.125",
-                "User-Agent": "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.37"
-            }
 
         print(f'request url: \033[0;37;44m{url_login}\033[0m')
         
         for _ in range(10):  # Perform up to 10 attempts
             try:
-                response = requests.get(url=url_login, params=data_login, headers=headers)
+                response = requests.get(url=url_login, params=data_login)
                 print(f'request status code: \033[0;37;42m {response.status_code} \033[0m')
 
-                # 提取括号内的 JSON 数据 原生是dr1011({json_data})
+                # 提取括号内的 JSON 数据 ({json_data})
                 json_data = response.text[response.text.index('(') + 1:response.text.rindex(')')]
                 
                 data = json.loads(json_data)
